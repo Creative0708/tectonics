@@ -1,0 +1,31 @@
+{
+  "devDependencies": {
+    "@types/node": "^20.14.7",
+    "html-webpack-plugin": "^5.6.0",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
+  },
+  "name": "tectonics",
+  "version": "1.0.0",
+  "description": "xkcd-style tectonics game. Based off of https://xkcd.com/2061/",
+  "private": true,
+  "main": "webpack.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "serve": "webpack serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Creative0708/tectonics.git"
+  },
+  "author": "Colin Cai <therealcreative0708@gmail.com>",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/Creative0708/tectonics/issues"
+  },
+  "homepage": "https://github.com/Creative0708/tectonics#readme"
+}
