@@ -1,8 +1,7 @@
 
+import * as EarthRenderer from "./earth_renderer";
+
 import "/assets/style.css";
 
-function func(): string {
-    return "Hello, world!";
-}
-
-console.log(func());
+document.querySelector("#earth-container")!.appendChild(EarthRenderer.canvas);
+document.body.appendChild(EarthRenderer.fpsElement);

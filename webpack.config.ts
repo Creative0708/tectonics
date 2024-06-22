@@ -27,6 +27,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       title: "Tectonics",
+      template: "index.html",
     }),
     new MiniCssExtractPlugin(),
   ],
@@ -44,6 +45,11 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   },
   devServer: {
+    watchFiles: [
+      "src/**/*",
+      "assets/**/*",
+      "index.html",
+    ],
     static: {
       directory: path.join(__dirname, 'public'),
     },

@@ -1,0 +1,30 @@
+html,
+body {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+html {
+    background: #eee;
+
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#earth-container {
+    width: 100%;
+    height: 100%;
+
+    display: grid;
+    place-items: center;
+}
+
+#fps {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 1em;
+
+    font-variant-numeric: tabular-nums;
+}
