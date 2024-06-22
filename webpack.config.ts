@@ -6,11 +6,11 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import TerserPlugin from "terser-webpack-plugin";
 
-const isProduction = process.env.NODE_ENV === "production";
+const isProd = process.env.NODE_ENV === "production";
 
 module.exports = {
   entry: './src/index.ts',
-  mode: isProduction ? "production" : "development",
+  mode: isProd ? "production" : "development",
   module: {
     rules: [
       {
@@ -22,6 +22,23 @@ module.exports = {
         test: /.s?css$/,
         use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
+      {
+        test: /\.glsl$/,
+        use: {
+          loader: "webpack-glsl-minify",
+          options: isProd ? {
+            // https://github.com/leosingleton/webpack-glsl-minify/issues/64
+            nomangle: ["texture"],
+            // https://github.com/leosingleton/webpack-glsl-minify/issues/62
+            preserveUniforms: true,
+          } : {
+            preserveDefines: true,
+            preserveUniforms: true,
+            preserveVariables: true,
+            disableMangle: true,
+          }
+        }
+      }
     ],
   },
   plugins: [

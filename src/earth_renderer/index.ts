@@ -1,5 +1,6 @@
 
 export { canvas } from "./earth";
+import * as Earth from "./earth";
 
 export const fpsElement = document.createElement("div");
 fpsElement.id = "fps";
@@ -13,7 +14,7 @@ function update(timestamp: number) {
         deltaTime = Math.min((timestamp - prevTime) / 1000, 0.1); // cap delta time to prevent huge animation skips
     prevTime = timestamp;
 
-    // renderS
+    Earth.render();
 
     {
         let fps = 1 / deltaTime;

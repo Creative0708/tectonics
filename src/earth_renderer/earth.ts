@@ -4,6 +4,8 @@
 import vertShaderObj from "./shader/vert.glsl";
 import fragShaderObj from "./shader/frag.glsl";
 
+import * as matrix from "./matrix";
+
 const X = .525731112119133606;
 const Z = .850650808352039932;
 
@@ -60,23 +62,26 @@ function subdivide() {
         newIndices.push([i3, c, b]);
         newIndices.push([a, b, c]);
     }
+    indices = newIndices;
 }
+for (let i = 0; i < 4; i++)
+    subdivide();
 
 export const canvas = document.createElement("canvas");
 
-function calculateDimensions() {
-    const dimension = Math.min(innerWidth, innerHeight) * 0.75 | 0;
-    canvas.width = dimension; canvas.height = dimension;
-}
-
-addEventListener("resize", calculateDimensions);
-calculateDimensions();
+// basic webgl2 initialization
 
 const gl = canvas.getContext("webgl2", { powerPreference: "low-power" });
 if (!gl)
     throw Error("webgl2 is not supported D:");
 
 gl.enable(gl.CULL_FACE);
+gl.clearColor(1, 0, 0, 1);
+gl.enable(gl.DEPTH_TEST);
+gl.clearDepth(1);
+gl.depthFunc(gl.LEQUAL);
+
+// program compilation
 
 const program = gl.createProgram();
 
@@ -99,5 +104,64 @@ gl.linkProgram(program);
 if (!gl.getProgramParameter(program, gl.LINK_STATUS))
     throw Error(`Shader linking error: ${gl.getProgramInfoLog(program)}`);
 
+gl.useProgram(program);
+
+// shader parameter setup
+
 const transformationMatrixUniform = gl.getUniformLocation(program, vertShaderObj.uniforms.transform.variableName);
+
+function handleResize() {
+    const dimension = Math.min(innerWidth, innerHeight) * 0.75 | 0;
+    canvas.width = dimension; canvas.height = dimension;
+    gl.uniformMatrix4fv(transformationMatrixUniform,
+        false,
+        matrix.orthographic(3, 3, 10),
+    );
+    gl.viewport(0, 0, dimension, dimension);
+}
+
+addEventListener("resize", handleResize);
+handleResize();
+
+const positionVBO = gl.createBuffer();
+
+gl.bindBuffer(gl.ARRAY_BUFFER, positionVBO);
+gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+gl.enableVertexAttribArray(0);
+
+const colorVBO = gl.createBuffer();
+
+gl.bindBuffer(gl.ARRAY_BUFFER, colorVBO);
+gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 0, 0);
+gl.enableVertexAttribArray(1);
+const arr = [];
+for (let i = 0; i < vertices.length; i++)
+    for (let j = 0; j < 3; j++)
+        arr.push(Math.random())
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arr), gl.STATIC_DRAW);
+
+const indexVBO = gl.createBuffer();
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexVBO);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices.flat()), gl.STATIC_DRAW);
+
+
+// rendering code!
+
+export function render() {
+    const now = Date.now() / 1000;
+
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionVBO);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices.flat()), gl.DYNAMIC_DRAW);
+
+    gl.drawElements(gl.TRIANGLES, indices.length * 3, gl.UNSIGNED_SHORT, 0);
+
+    const projectionMatrix = matrix.multiply(matrix.rotation(now, now * 0.5, now * 0.1), matrix.orthographic(3, 3, -10));
+
+    gl.uniformMatrix4fv(transformationMatrixUniform,
+        false,
+        projectionMatrix
+    );
+}
 

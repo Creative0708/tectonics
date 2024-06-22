@@ -1,4 +1,4 @@
 import { orthographic } from "./matrix";
 
-let baseCameraMatrix = orthographic(3, 3, 10);
+let baseCameraMatrix = orthographic(10, 10, 10);
 
