@@ -1,30 +1,6 @@
-import { IcosahedronGeometry, Mesh, MeshBasicMaterial, OrthographicCamera, Scene, WebGLRenderer } from "three";
 
-let cameraSize = 2;
+export { canvas } from "./earth";
 
-const scene = new Scene();
-const camera = new OrthographicCamera(-cameraSize, cameraSize, cameraSize, -cameraSize);
-
-const geometry = new IcosahedronGeometry(1, 25);
-const material = new MeshBasicMaterial({ color: 0xff0000 });
-
-const sphere = new Mesh(geometry, material);
-
-scene.add(sphere);
-camera.position.z = 5;
-
-
-const renderer = new WebGLRenderer();
-
-function calculateDimensions() {
-    const dimension = Math.min(innerWidth, innerHeight) * 0.75 | 0;
-    renderer.setSize(dimension, dimension);
-}
-
-addEventListener("resize", calculateDimensions);
-calculateDimensions();
-
-export const canvas = renderer.domElement;
 export const fpsElement = document.createElement("div");
 fpsElement.id = "fps";
 
@@ -37,7 +13,7 @@ function update(timestamp: number) {
         deltaTime = Math.min((timestamp - prevTime) / 1000, 0.1); // cap delta time to prevent huge animation skips
     prevTime = timestamp;
 
-    renderer.render(scene, camera);
+    // renderS
 
     {
         let fps = 1 / deltaTime;
@@ -47,5 +23,7 @@ function update(timestamp: number) {
 
         fpsElement.textContent = "FPS: " + Math.round(fpsQueue.reduce((a, b) => a + b) / fpsQueue.length);
     }
+
+    requestAnimationFrame(update);
 }
-renderer.setAnimationLoop(update);
+requestAnimationFrame(update);
