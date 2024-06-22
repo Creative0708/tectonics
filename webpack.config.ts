@@ -2,6 +2,9 @@ import path from "path";
 import webpack from "webpack";
 import _ from "webpack-dev-server";
 import HtmlWebpackPlugin from "html-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
+import TerserPlugin from "terser-webpack-plugin";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -15,13 +18,24 @@ module.exports = {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
+      {
+        test: /.s?css$/,
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
+      },
     ],
   },
   plugins: [
     new HtmlWebpackPlugin({
-        title: "Tectonics",
-    })
+      title: "Tectonics",
+    }),
+    new MiniCssExtractPlugin(),
   ],
+  optimization: {
+    minimizer: [
+      new CssMinimizerPlugin(),
+      new TerserPlugin(),
+    ]
+  },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
@@ -35,5 +49,6 @@ module.exports = {
     },
     compress: true,
     port: 9000,
+    hot: true,
   },
 } satisfies webpack.Configuration;
