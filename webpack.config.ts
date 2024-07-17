@@ -50,9 +50,9 @@ module.exports = {
   ],
   optimization: {
     minimizer: [
+      isProd && new TerserPlugin(),
       new CssMinimizerPlugin(),
-      new TerserPlugin(),
-    ]
+    ],
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],

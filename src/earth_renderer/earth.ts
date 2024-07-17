@@ -145,9 +145,17 @@ gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexVBO);
 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices.flat()), gl.STATIC_DRAW);
 
 
+let mouseX: number | null = null, mouseY: number | null = null;
+addEventListener("mousemove", (e) => {
+    const windowMin = Math.min(innerWidth, innerHeight);
+    mouseX = (e.pageX - innerWidth / 2) / windowMin;
+    mouseY = (e.pageY - innerHeight / 2) / windowMin;
+});
+
 // rendering code!
 
-export function render() {
+let panX: number | null = null, panY: number | null = null;
+export function render(deltaTime: number) {
     const now = Date.now() / 1000;
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -157,7 +165,18 @@ export function render() {
 
     gl.drawElements(gl.TRIANGLES, indices.length * 3, gl.UNSIGNED_SHORT, 0);
 
-    const projectionMatrix = matrix.multiply(matrix.rotation(now, now * 0.5, now * 0.1), matrix.orthographic(3, 3, -10));
+    function damp(a: number | null, b: number | null): number | null {
+        if (a === null)
+            return b;
+
+        const SMOOTHING = 1e-40;
+        return a + (b - a) * SMOOTHING ** deltaTime;
+    }
+
+    panX = damp(panX, mouseX);
+    panY = damp(panY, mouseY);
+
+    const projectionMatrix = matrix.multiply(matrix.rotation(now * 0.03 + panY * 3, now * 0.15 + panX * 3, now * 0.06), matrix.orthographic(3, 3, -10));
 
     gl.uniformMatrix4fv(transformationMatrixUniform,
         false,

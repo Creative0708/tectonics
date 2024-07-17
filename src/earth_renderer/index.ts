@@ -14,7 +14,7 @@ function update(timestamp: number) {
         deltaTime = Math.min((timestamp - prevTime) / 1000, 0.1); // cap delta time to prevent huge animation skips
     prevTime = timestamp;
 
-    Earth.render();
+    Earth.render(deltaTime);
 
     {
         let fps = 1 / deltaTime;
